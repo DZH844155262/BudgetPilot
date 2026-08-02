@@ -63,3 +63,30 @@ def test_missing_budget_returns_404() -> None:
     assert response.json() == {
         "detail": "未找到对应的预算数据",
     }
+
+def test_invalid_month_format_returns_422() -> None:
+    """月份格式错误时应返回422。"""
+
+    response = client.get(
+        "/budget-analysis",
+        params={
+            "month": "2026/07",
+            "department_id": "D001",
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_invalid_department_id_returns_422() -> None:
+    """部门编号格式错误时应返回422。"""
+
+    response = client.get(
+        "/budget-analysis",
+        params={
+            "month": "2026-07",
+            "department_id": "市场部",
+        },
+    )
+
+    assert response.status_code == 422
