@@ -12,9 +12,12 @@ htmlcov/
 .venv/
 venv/
 
-# 环境变量和密钥
+# 真实环境配置不上传
 .env
 .env.*
+
+# 示例配置允许上传
+!.env.example
 
 # 编辑器配置
 .vscode/
