@@ -43,3 +43,14 @@ class BudgetAnalysisItem(BaseModel):
     ] = Field(
         description="预算风险状态",
     )
+class DepartmentItem(BaseModel):
+    """企业部门基础信息。"""
+
+    department_id: str = Field(
+        description="部门编号",
+        examples=["D001"],
+    )
+    department_name: str = Field(
+        description="部门名称",
+        examples=["市场部"],
+    )

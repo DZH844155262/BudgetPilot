@@ -90,3 +90,32 @@ def test_invalid_department_id_returns_422() -> None:
     )
 
     assert response.status_code == 422
+
+def test_departments_endpoint() -> None:
+    """部门接口应返回全部可查询部门。"""
+
+    response = client.get("/departments")
+
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "department_id": "D001",
+            "department_name": "市场部",
+        },
+        {
+            "department_id": "D002",
+            "department_name": "研发部",
+        },
+    ]
+
+
+def test_available_months_endpoint() -> None:
+    """月份接口应返回全部可查询月份。"""
+
+    response = client.get("/available-months")
+
+    assert response.status_code == 200
+    assert response.json() == [
+        "2026-06",
+        "2026-07",
+    ]

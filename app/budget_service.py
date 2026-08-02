@@ -1,5 +1,5 @@
 from .budget_calculator import calculate_budget_metrics
-from .data_loader import get_budget_summary
+from .data_loader import get_budget_summary, load_budget_data
 
 
 def analyze_department_budget(
@@ -31,7 +31,33 @@ def analyze_department_budget(
         )
 
     return analysis_results
+def get_departments() -> list[dict[str, str]]:
+    """返回所有可查询部门。"""
 
+    departments, _, _ = load_budget_data()
+
+    return departments[
+        [
+            "department_id",
+            "department_name",
+        ]
+    ].to_dict(orient="records")
+
+
+def get_available_months() -> list[str]:
+    """返回预算数据中所有可查询月份。"""
+
+    _, budgets, _ = load_budget_data()
+
+    months = sorted(
+        budgets["month"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+
+    return months
 
 if __name__ == "__main__":
     results = analyze_department_budget(

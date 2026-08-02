@@ -5,6 +5,12 @@ from fastapi import FastAPI, HTTPException, Query
 from .budget_service import analyze_department_budget
 
 from .schemas import BudgetAnalysisItem
+from .budget_service import (
+    analyze_department_budget,
+    get_available_months,
+    get_departments,
+)
+from .schemas import BudgetAnalysisItem, DepartmentItem
 app = FastAPI(
     title="BudgetPilot API",
     description="企业预算与费用分析智能助手后端接口",
@@ -56,3 +62,22 @@ def get_budget_analysis(
             status_code=404,
             detail=str(exc),
         ) from exc
+
+@app.get(
+    "/departments",
+    response_model=list[DepartmentItem],
+)
+def list_departments() -> list[dict[str, str]]:
+    """返回所有可查询部门。"""
+
+    return get_departments()
+
+
+@app.get(
+    "/available-months",
+    response_model=list[str],
+)
+def list_available_months() -> list[str]:
+    """返回所有可查询月份。"""
+
+    return get_available_months()
