@@ -167,3 +167,48 @@ def test_missing_budget_anomalies_returns_404() -> None:
     assert response.json() == {
         "detail": "未找到对应的预算数据",
     }
+def test_budget_report_endpoint() -> None:
+    """报告接口应返回完整预算分析报告。"""
+
+    response = client.get(
+        "/budget-report",
+        params={
+            "month": "2026-07",
+            "department_id": "D001",
+        },
+    )
+
+    assert response.status_code == 200
+
+    report = response.json()
+    summary = report["summary"]
+
+    assert report["month"] == "2026-07"
+    assert report["department_id"] == "D001"
+
+    assert summary["total_budget"] == 70000.0
+    assert summary["total_actual"] == 75300.0
+    assert summary["total_remaining"] == -5300.0
+    assert summary["overall_execution_rate"] == 107.57
+    assert summary["over_budget_count"] == 1
+    assert summary["warning_count"] == 2
+
+    assert len(report["details"]) == 3
+    assert len(report["anomalies"]) == 3
+
+
+def test_missing_budget_report_returns_404() -> None:
+    """预算数据不存在时，报告接口应返回404。"""
+
+    response = client.get(
+        "/budget-report",
+        params={
+            "month": "2026-08",
+            "department_id": "D001",
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "未找到对应的预算数据",
+    }

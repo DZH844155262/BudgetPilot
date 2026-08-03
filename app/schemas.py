@@ -80,3 +80,49 @@ class BudgetAnomalyItem(BaseModel):
     )
 
     message: str = Field(description="异常说明")
+
+class BudgetReportSummary(BaseModel):
+    """预算报告汇总指标。"""
+
+    total_budget: float = Field(
+        description="总预算金额",
+        ge=0,
+    )
+    total_actual: float = Field(
+        description="总实际费用",
+        ge=0,
+    )
+    total_remaining: float = Field(
+        description="总剩余预算，负数表示整体超预算",
+    )
+    overall_execution_rate: float = Field(
+        description="总体预算执行率",
+        ge=0,
+    )
+    over_budget_count: int = Field(
+        description="超预算科目数量",
+        ge=0,
+    )
+    warning_count: int = Field(
+        description="预算预警科目数量",
+        ge=0,
+    )
+
+
+class BudgetReportResponse(BaseModel):
+    """完整预算分析报告。"""
+
+    month: str = Field(
+        description="报告月份",
+        examples=["2026-07"],
+    )
+    department_id: str = Field(
+        description="部门编号",
+        examples=["D001"],
+    )
+    summary: BudgetReportSummary
+    details: list[BudgetAnalysisItem]
+    anomalies: list[BudgetAnomalyItem]
+    management_summary: str = Field(
+        description="管理层关注摘要",
+    )

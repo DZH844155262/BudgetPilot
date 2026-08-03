@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import FastAPI, HTTPException, Query
 
 from .budget_service import analyze_department_budget,analyze_budget_anomalies
+from .report_service import generate_budget_report
 
-
-from .schemas import BudgetAnalysisItem,BudgetAnomalyItem
+from .schemas import BudgetAnalysisItem,BudgetAnomalyItem,BudgetReportResponse
 from .budget_service import (
     analyze_department_budget,
     get_available_months,
@@ -17,7 +17,40 @@ app = FastAPI(
     description="企业预算与费用分析智能助手后端接口",
     version="0.1.0",
 )
+@app.get(
+    "/budget-report",
+    response_model=BudgetReportResponse,
+)
+def get_budget_report(
+    month: Annotated[
+        str,
+        Query(
+            pattern=r"^\d{4}-(0[1-9]|1[0-2])$",
+            description="报告月份，格式为 YYYY-MM",
+            examples=["2026-07"],
+        ),
+    ],
+    department_id: Annotated[
+        str,
+        Query(
+            pattern=r"^D\d{3}$",
+            description="部门编号，格式为D加三位数字",
+            examples=["D001"],
+        ),
+    ],
+) -> dict[str, object]:
+    """生成指定月份和部门的预算分析报告。"""
 
+    try:
+        return generate_budget_report(
+            month=month,
+            department_id=department_id,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail=str(exc),
+        ) from exc
 
 @app.get("/health")
 def health_check() -> dict[str, str]:
