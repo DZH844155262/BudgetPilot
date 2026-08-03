@@ -212,3 +212,44 @@ def test_missing_budget_report_returns_404() -> None:
     assert response.json() == {
         "detail": "未找到对应的预算数据",
     }
+def test_expense_growth_anomalies_endpoint() -> None:
+    """环比异常接口应返回费用增长异常。"""
+
+    response = client.get(
+        "/expense-growth-anomalies",
+        params={
+            "month": "2026-07",
+            "department_id": "D001",
+        },
+    )
+
+    assert response.status_code == 200
+
+    result = response.json()
+
+    assert result["month"] == "2026-07"
+    assert result["previous_month"] == "2026-06"
+    assert result["previous_data_available"] is True
+
+    anomalies = result["anomalies"]
+
+    assert len(anomalies) == 1
+    assert anomalies[0]["category"] == "差旅费"
+    assert anomalies[0]["growth_rate"] == 27.78
+
+
+def test_missing_expense_growth_data_returns_404() -> None:
+    """当前月份预算不存在时应返回404。"""
+
+    response = client.get(
+        "/expense-growth-anomalies",
+        params={
+            "month": "2026-08",
+            "department_id": "D001",
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "未找到对应的预算数据",
+    }

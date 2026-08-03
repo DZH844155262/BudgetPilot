@@ -1,10 +1,68 @@
 from .budget_calculator import calculate_budget_metrics
+from datetime import date, timedelta
+from decimal import Decimal
 from .budget_repository import (
     fetch_available_months,
     fetch_budget_summary,
     fetch_departments,
+    fetch_monthly_actuals,
 )
-from .anomaly_detector import detect_budget_anomalies
+from .anomaly_detector import (
+    detect_budget_anomalies,
+    detect_month_over_month_growth,
+)
+def _get_previous_month(month: str) -> str:
+    """根据当前月份计算上一个自然月。"""
+
+    current_month_first_day = date.fromisoformat(
+        f"{month}-01"
+    )
+
+    previous_month_last_day = (
+        current_month_first_day - timedelta(days=1)
+    )
+
+    return previous_month_last_day.strftime("%Y-%m")
+def analyze_month_over_month_growth(
+    month: str,
+    department_id: str,
+    threshold: float = 20.0,
+) -> dict[str, object]:
+    """分析指定部门费用的月度环比异常增长。"""
+
+    previous_month = _get_previous_month(month)
+
+    current_summary = fetch_budget_summary(
+        month=month,
+        department_id=department_id,
+    )
+
+    current_actuals = {
+        str(item["category"]): Decimal(
+            str(item["actual_amount"])
+        )
+        for item in current_summary
+    }
+
+    previous_actuals = fetch_monthly_actuals(
+        month=previous_month,
+        department_id=department_id,
+    )
+
+    anomalies = detect_month_over_month_growth(
+        current_actuals=current_actuals,
+        previous_actuals=previous_actuals,
+        threshold=threshold,
+    )
+
+    return {
+        "month": month,
+        "previous_month": previous_month,
+        "department_id": department_id,
+        "threshold": threshold,
+        "previous_data_available": bool(previous_actuals),
+        "anomalies": anomalies,
+    }
 def analyze_budget_anomalies(
     month: str,
     department_id: str,

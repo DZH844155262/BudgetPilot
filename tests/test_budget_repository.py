@@ -4,8 +4,33 @@ from app.budget_repository import (
     fetch_available_months,
     fetch_budget_summary,
     fetch_departments,
+    fetch_monthly_actuals,
 )
 
+def test_fetch_monthly_actuals() -> None:
+    """应正确汇总市场部不同月份的实际费用。"""
+
+    july_actuals = fetch_monthly_actuals(
+        month="2026-07",
+        department_id="D001",
+    )
+
+    assert july_actuals == {
+        "市场推广费": Decimal("56000.00"),
+        "差旅费": Decimal("11500.00"),
+        "软件服务费": Decimal("7800.00"),
+    }
+
+    june_actuals = fetch_monthly_actuals(
+        month="2026-06",
+        department_id="D001",
+    )
+
+    assert june_actuals == {
+        "市场推广费": Decimal("48000.00"),
+        "差旅费": Decimal("9000.00"),
+        "软件服务费": Decimal("7000.00"),
+    }
 
 def test_fetch_departments() -> None:
     """应从PostgreSQL查询全部部门。"""

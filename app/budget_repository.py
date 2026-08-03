@@ -7,6 +7,52 @@ from .database import SessionLocal
 from .models import Budget, Department, Expense
 
 
+def _get_month_date_range(
+    month: str,
+) -> tuple[date, date]:
+    """返回指定月份的起始日期和下个月起始日期。"""
+
+    year, month_number = map(int, month.split("-"))
+
+    start_date = date(year, month_number, 1)
+
+    if month_number == 12:
+        end_date = date(year + 1, 1, 1)
+    else:
+        end_date = date(year, month_number + 1, 1)
+
+    return start_date, end_date
+def fetch_monthly_actuals(
+    month: str,
+    department_id: str,
+) -> dict[str, Decimal]:
+    """查询指定月份和部门各费用科目的实际支出。"""
+
+    start_date, end_date = _get_month_date_range(month)
+
+    with SessionLocal() as session:
+        statement = (
+            select(
+                Expense.category,
+                func.sum(
+                    Expense.actual_amount
+                ).label("actual_amount"),
+            )
+            .where(
+                Expense.department_id == department_id,
+                Expense.date >= start_date,
+                Expense.date < end_date,
+            )
+            .group_by(Expense.category)
+            .order_by(Expense.category)
+        )
+
+        rows = session.execute(statement).all()
+
+    return {
+        row.category: row.actual_amount
+        for row in rows
+    }
 def fetch_departments() -> list[dict[str, str]]:
     """从数据库查询全部部门。"""
 
@@ -48,14 +94,7 @@ def fetch_budget_summary(
 ) -> list[dict[str, str | Decimal]]:
     """查询指定月份和部门的预算及实际费用汇总。"""
 
-    year, month_number = map(int, month.split("-"))
-
-    start_date = date(year, month_number, 1)
-
-    if month_number == 12:
-        end_date = date(year + 1, 1, 1)
-    else:
-        end_date = date(year, month_number + 1, 1)
+    start_date, end_date = _get_month_date_range(month)
 
     with SessionLocal() as session:
         budget_statement = (

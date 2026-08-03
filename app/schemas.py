@@ -126,3 +126,66 @@ class BudgetReportResponse(BaseModel):
     management_summary: str = Field(
         description="管理层关注摘要",
     )
+class MonthOverMonthGrowthItem(BaseModel):
+    """单个费用环比异常事件。"""
+
+    anomaly_type: Literal[
+        "month_over_month_growth"
+    ] = Field(description="异常类型")
+
+    severity: Literal[
+        "medium"
+    ] = Field(description="严重程度")
+
+    category: str = Field(
+        description="费用科目"
+    )
+
+    current_amount: float = Field(
+        description="本月实际费用",
+        ge=0,
+    )
+
+    previous_amount: float = Field(
+        description="上月实际费用",
+        ge=0,
+    )
+
+    growth_rate: float = Field(
+        description="环比增长率，单位为百分比",
+        ge=0,
+    )
+
+    message: str = Field(
+        description="异常说明"
+    )
+
+
+class MonthOverMonthGrowthResponse(BaseModel):
+    """费用环比异常分析结果。"""
+
+    month: str = Field(
+        description="本月月份",
+        examples=["2026-07"],
+    )
+
+    previous_month: str = Field(
+        description="对比月份",
+        examples=["2026-06"],
+    )
+
+    department_id: str = Field(
+        description="部门编号",
+        examples=["D001"],
+    )
+
+    threshold: float = Field(
+        description="环比异常阈值",
+        ge=0,
+    )
+
+    previous_data_available: bool = Field(
+        description="是否存在上月费用数据"
+    )
+
+    anomalies: list[MonthOverMonthGrowthItem]

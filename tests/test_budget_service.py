@@ -1,8 +1,32 @@
 import pytest
 
-from app.budget_service import analyze_department_budget
+from app.budget_service import analyze_department_budget,analyze_month_over_month_growth
 
+def test_analyze_month_over_month_growth() -> None:
+    """应识别市场部2026年7月的环比增长异常。"""
 
+    result = analyze_month_over_month_growth(
+        month="2026-07",
+        department_id="D001",
+    )
+
+    assert result["month"] == "2026-07"
+    assert result["previous_month"] == "2026-06"
+    assert result["department_id"] == "D001"
+    assert result["threshold"] == 20.0
+    assert result["previous_data_available"] is True
+
+    anomalies = result["anomalies"]
+
+    assert len(anomalies) == 1
+
+    anomaly = anomalies[0]
+
+    assert anomaly["category"] == "差旅费"
+    assert anomaly["current_amount"] == 11500.0
+    assert anomaly["previous_amount"] == 9000.0
+    assert anomaly["growth_rate"] == 27.78
+    
 def test_analyze_department_budget() -> None:
     """应正确分析市场部2026年7月预算执行情况。"""
 
