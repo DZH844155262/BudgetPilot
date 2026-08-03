@@ -54,3 +54,29 @@ class DepartmentItem(BaseModel):
         description="部门名称",
         examples=["市场部"],
     )
+class BudgetAnomalyItem(BaseModel):
+    """单个预算异常事件。"""
+
+    anomaly_type: Literal[
+        "over_budget",
+        "near_budget_limit",
+    ] = Field(description="异常类型")
+
+    severity: Literal[
+        "high",
+        "medium",
+    ] = Field(description="严重程度")
+
+    category: str = Field(description="费用科目")
+
+    execution_rate: float = Field(
+        description="预算执行率",
+        ge=0,
+    )
+
+    amount: float = Field(
+        description="超支金额或剩余预算",
+        ge=0,
+    )
+
+    message: str = Field(description="异常说明")

@@ -119,3 +119,51 @@ def test_available_months_endpoint() -> None:
         "2026-06",
         "2026-07",
     ]
+def test_budget_anomalies_endpoint() -> None:
+    """异常接口应返回市场部2026年7月预算异常。"""
+
+    response = client.get(
+        "/budget-anomalies",
+        params={
+            "month": "2026-07",
+            "department_id": "D001",
+        },
+    )
+
+    assert response.status_code == 200
+
+    anomalies = response.json()
+    assert len(anomalies) == 3
+
+    anomalies_by_category = {
+        item["category"]: item
+        for item in anomalies
+    }
+
+    marketing = anomalies_by_category["市场推广费"]
+
+    assert marketing["anomaly_type"] == "over_budget"
+    assert marketing["severity"] == "high"
+    assert marketing["amount"] == 6000.0
+
+    travel = anomalies_by_category["差旅费"]
+
+    assert travel["anomaly_type"] == "near_budget_limit"
+    assert travel["severity"] == "medium"
+
+
+def test_missing_budget_anomalies_returns_404() -> None:
+    """预算数据不存在时，异常接口应返回404。"""
+
+    response = client.get(
+        "/budget-anomalies",
+        params={
+            "month": "2026-08",
+            "department_id": "D001",
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "未找到对应的预算数据",
+    }

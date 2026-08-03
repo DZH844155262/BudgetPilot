@@ -4,8 +4,19 @@ from .budget_repository import (
     fetch_budget_summary,
     fetch_departments,
 )
+from .anomaly_detector import detect_budget_anomalies
+def analyze_budget_anomalies(
+    month: str,
+    department_id: str,
+) -> list[dict[str, object]]:
+    """分析指定部门和月份的预算异常。"""
 
+    analysis_results = analyze_department_budget(
+        month=month,
+        department_id=department_id,
+    )
 
+    return detect_budget_anomalies(analysis_results)
 def analyze_department_budget(
     month: str,
     department_id: str,
