@@ -213,3 +213,21 @@ class LargeExpenseResponse(BaseModel):
     expense_count: int = Field(ge=0)
     anomaly_count: int = Field(ge=0)
     anomalies: list[LargeExpenseItem]
+
+class RiskOverviewSummary(BaseModel):
+    """统一风险总览统计。"""
+
+    total_anomaly_count: int = Field(ge=0)
+    high_risk_count: int = Field(ge=0)
+    medium_risk_count: int = Field(ge=0)
+
+
+class RiskOverviewResponse(BaseModel):
+    """部门预算统一风险总览。"""
+
+    month: str
+    department_id: str
+    summary: RiskOverviewSummary
+    budget_anomalies: list[BudgetAnomalyItem]
+    growth_anomalies: list[MonthOverMonthGrowthItem]
+    large_expense_anomalies: list[LargeExpenseItem]

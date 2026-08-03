@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Query
-
+from .risk_service import generate_risk_overview
 from .report_service import generate_budget_report
 from .schemas import (
     BudgetAnalysisItem,
@@ -10,6 +10,7 @@ from .schemas import (
     DepartmentItem,
     LargeExpenseResponse,
     MonthOverMonthGrowthResponse,
+    RiskOverviewResponse,
 )
 
 from .budget_service import (
@@ -30,6 +31,54 @@ app = FastAPI(
     version="0.1.0",
 )
 
+@app.get(
+    "/risk-overview",
+    response_model=RiskOverviewResponse,
+)
+def get_risk_overview(
+    month: Annotated[
+        str,
+        Query(
+            pattern=r"^\d{4}-(0[1-9]|1[0-2])$",
+            description="统计月份，格式为 YYYY-MM",
+        ),
+    ],
+    department_id: Annotated[
+        str,
+        Query(
+            pattern=r"^D\d{3}$",
+            description="部门编号",
+        ),
+    ],
+    growth_threshold: Annotated[
+        float,
+        Query(
+            ge=0,
+            description="环比增长异常阈值",
+        ),
+    ] = 20.0,
+    large_expense_threshold: Annotated[
+        float,
+        Query(
+            ge=0,
+            description="单笔大额费用阈值",
+        ),
+    ] = 20000.0,
+) -> dict[str, object]:
+    """返回指定部门和月份的统一风险总览。"""
+
+    try:
+        return generate_risk_overview(
+            month=month,
+            department_id=department_id,
+            growth_threshold=growth_threshold,
+            large_expense_threshold=large_expense_threshold,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail=str(exc),
+        ) from exc
 @app.get(
     "/large-expense-anomalies",
     response_model=LargeExpenseResponse,

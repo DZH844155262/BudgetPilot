@@ -300,3 +300,41 @@ def test_missing_large_expense_data_returns_404() -> None:
     assert response.json() == {
         "detail": "未找到对应的预算数据",
     }
+
+def test_risk_overview_endpoint() -> None:
+    """风险总览接口应返回全部异常分类。"""
+
+    response = client.get(
+        "/risk-overview",
+        params={
+            "month": "2026-07",
+            "department_id": "D001",
+        },
+    )
+
+    assert response.status_code == 200
+
+    result = response.json()
+    summary = result["summary"]
+
+    assert summary["total_anomaly_count"] == 6
+    assert summary["high_risk_count"] == 3
+    assert summary["medium_risk_count"] == 3
+
+    assert len(result["budget_anomalies"]) == 3
+    assert len(result["growth_anomalies"]) == 1
+    assert len(result["large_expense_anomalies"]) == 2
+
+
+def test_missing_risk_overview_returns_404() -> None:
+    """预算数据不存在时风险总览应返回404。"""
+
+    response = client.get(
+        "/risk-overview",
+        params={
+            "month": "2026-08",
+            "department_id": "D001",
+        },
+    )
+
+    assert response.status_code == 404
