@@ -2,6 +2,7 @@ from decimal import Decimal
 from app.anomaly_detector import (
     detect_budget_anomalies,
     detect_month_over_month_growth,
+    detect_large_expenses,
 )
 def test_detect_month_over_month_growth() -> None:
     """环比增长达到20%时应识别为异常。"""
@@ -100,3 +101,48 @@ def test_normal_budget_has_no_anomaly() -> None:
     anomalies = detect_budget_anomalies(results)
 
     assert anomalies == []
+
+def test_detect_large_expenses() -> None:
+    """金额达到20000元时应识别为大额费用。"""
+
+    expenses = [
+        {
+            "expense_id": "E007",
+            "date": "2026-07-02",
+            "category": "市场推广费",
+            "actual_amount": Decimal("30000.00"),
+            "description": "搜索广告投放",
+        },
+        {
+            "expense_id": "E009",
+            "date": "2026-07-06",
+            "category": "差旅费",
+            "actual_amount": Decimal("7000.00"),
+            "description": "客户拜访",
+        },
+    ]
+
+    anomalies = detect_large_expenses(
+        expenses=expenses,
+        amount_threshold=20000.0,
+    )
+
+    assert len(anomalies) == 1
+    assert anomalies[0]["expense_id"] == "E007"
+    assert anomalies[0]["anomaly_type"] == "large_expense"
+    assert anomalies[0]["severity"] == "high"
+    assert anomalies[0]["amount"] == 30000.0
+    assert anomalies[0]["threshold"] == 20000.0
+
+def test_negative_large_expense_threshold_raises_error() -> None:
+    """大额费用阈值不能为负数。"""
+
+    try:
+        detect_large_expenses(
+            expenses=[],
+            amount_threshold=-1,
+        )
+    except ValueError as exc:
+        assert str(exc) == "大额费用阈值不能小于0"
+    else:
+        raise AssertionError("预期产生ValueError")

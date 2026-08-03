@@ -165,3 +165,46 @@ if __name__ == "__main__":
         department_id="D001",
     ):
         print(item)
+
+def fetch_expense_details(
+    month: str,
+    department_id: str,
+) -> list[dict[str, object]]:
+    """查询指定月份和部门的费用明细。"""
+
+    start_date, end_date = _get_month_date_range(month)
+
+    with SessionLocal() as session:
+        statement = (
+            select(
+                Expense.expense_id,
+                Expense.date,
+                Expense.department_id,
+                Expense.category,
+                Expense.actual_amount,
+                Expense.description,
+            )
+            .where(
+                Expense.department_id == department_id,
+                Expense.date >= start_date,
+                Expense.date < end_date,
+            )
+            .order_by(
+                Expense.date,
+                Expense.expense_id,
+            )
+        )
+
+        rows = session.execute(statement).all()
+
+    return [
+        {
+            "expense_id": row.expense_id,
+            "date": row.date,
+            "department_id": row.department_id,
+            "category": row.category,
+            "actual_amount": row.actual_amount,
+            "description": row.description,
+        }
+        for row in rows
+    ]

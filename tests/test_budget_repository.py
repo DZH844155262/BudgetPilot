@@ -5,6 +5,7 @@ from app.budget_repository import (
     fetch_budget_summary,
     fetch_departments,
     fetch_monthly_actuals,
+    fetch_expense_details,
 )
 
 def test_fetch_monthly_actuals() -> None:
@@ -84,3 +85,22 @@ def test_fetch_budget_summary() -> None:
     software = results_by_category["软件服务费"]
     assert software["budget_amount"] == Decimal("8000.00")
     assert software["actual_amount"] == Decimal("7800.00")
+
+def test_fetch_expense_details() -> None:
+    """应查询市场部2026年7月的全部费用明细。"""
+
+    expenses = fetch_expense_details(
+        month="2026-07",
+        department_id="D001",
+    )
+
+    assert len(expenses) == 5
+
+    expenses_by_id = {
+        item["expense_id"]: item
+        for item in expenses
+    }
+
+    assert expenses_by_id["E007"]["actual_amount"] == Decimal("30000.00")
+    assert expenses_by_id["E008"]["actual_amount"] == Decimal("26000.00")
+    assert expenses_by_id["E011"]["actual_amount"] == Decimal("7800.00")

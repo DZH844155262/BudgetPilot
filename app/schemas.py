@@ -189,3 +189,27 @@ class MonthOverMonthGrowthResponse(BaseModel):
     )
 
     anomalies: list[MonthOverMonthGrowthItem]
+
+class LargeExpenseItem(BaseModel):
+    """单笔大额费用异常。"""
+
+    anomaly_type: Literal["large_expense"]
+    severity: Literal["high"]
+    expense_id: str
+    date: str
+    category: str
+    amount: float = Field(ge=0)
+    threshold: float = Field(ge=0)
+    description: str | None
+    message: str
+
+
+class LargeExpenseResponse(BaseModel):
+    """大额费用异常分析结果。"""
+
+    month: str
+    department_id: str
+    amount_threshold: float = Field(ge=0)
+    expense_count: int = Field(ge=0)
+    anomaly_count: int = Field(ge=0)
+    anomalies: list[LargeExpenseItem]

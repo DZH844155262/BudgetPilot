@@ -6,10 +6,12 @@ from .budget_repository import (
     fetch_budget_summary,
     fetch_departments,
     fetch_monthly_actuals,
+    fetch_expense_details,
 )
 from .anomaly_detector import (
     detect_budget_anomalies,
     detect_month_over_month_growth,
+    detect_large_expenses,
 )
 def _get_previous_month(month: str) -> str:
     """根据当前月份计算上一个自然月。"""
@@ -132,3 +134,35 @@ if __name__ == "__main__":
             f"执行率 {item['execution_rate']:.2f}%，"
             f"状态：{item['risk_status']}"
         )
+
+def analyze_large_expenses(
+    month: str,
+    department_id: str,
+    amount_threshold: float = 20000.0,
+) -> dict[str, object]:
+    """分析指定部门和月份的单笔大额费用。"""
+
+    # 先验证当前月份确实有预算数据
+    fetch_budget_summary(
+        month=month,
+        department_id=department_id,
+    )
+
+    expenses = fetch_expense_details(
+        month=month,
+        department_id=department_id,
+    )
+
+    anomalies = detect_large_expenses(
+        expenses=expenses,
+        amount_threshold=amount_threshold,
+    )
+
+    return {
+        "month": month,
+        "department_id": department_id,
+        "amount_threshold": amount_threshold,
+        "expense_count": len(expenses),
+        "anomaly_count": len(anomalies),
+        "anomalies": anomalies,
+    }

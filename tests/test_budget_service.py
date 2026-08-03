@@ -1,6 +1,6 @@
 import pytest
 
-from app.budget_service import analyze_department_budget,analyze_month_over_month_growth
+from app.budget_service import analyze_department_budget,analyze_month_over_month_growth,analyze_large_expenses
 
 def test_analyze_month_over_month_growth() -> None:
     """应识别市场部2026年7月的环比增长异常。"""
@@ -26,7 +26,7 @@ def test_analyze_month_over_month_growth() -> None:
     assert anomaly["current_amount"] == 11500.0
     assert anomaly["previous_amount"] == 9000.0
     assert anomaly["growth_rate"] == 27.78
-    
+
 def test_analyze_department_budget() -> None:
     """应正确分析市场部2026年7月预算执行情况。"""
 
@@ -75,3 +75,28 @@ def test_missing_budget_data_raises_error() -> None:
             month="2026-08",
             department_id="D001",
         )
+
+def test_analyze_large_expenses() -> None:
+    """应识别市场部2026年7月的两笔大额费用。"""
+
+    result = analyze_large_expenses(
+        month="2026-07",
+        department_id="D001",
+        amount_threshold=20000.0,
+    )
+
+    assert result["month"] == "2026-07"
+    assert result["department_id"] == "D001"
+    assert result["amount_threshold"] == 20000.0
+    assert result["expense_count"] == 5
+    assert result["anomaly_count"] == 2
+
+    anomalies = result["anomalies"]
+
+    assert {
+        item["expense_id"]
+        for item in anomalies
+    } == {
+        "E007",
+        "E008",
+    }

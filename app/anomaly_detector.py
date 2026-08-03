@@ -96,3 +96,38 @@ def detect_month_over_month_growth(
             )
 
     return anomalies
+
+def detect_large_expenses(
+    expenses: list[dict[str, Any]],
+    amount_threshold: float = 20000.0,
+) -> list[dict[str, Any]]:
+    """识别达到指定金额阈值的单笔大额费用。"""
+
+    if amount_threshold < 0:
+        raise ValueError("大额费用阈值不能小于0")
+
+    anomalies: list[dict[str, Any]] = []
+
+    for expense in expenses:
+        amount = float(expense["actual_amount"])
+
+        if amount >= amount_threshold:
+            anomalies.append(
+                {
+                    "anomaly_type": "large_expense",
+                    "severity": "high",
+                    "expense_id": str(expense["expense_id"]),
+                    "date": str(expense["date"]),
+                    "category": str(expense["category"]),
+                    "amount": amount,
+                    "threshold": amount_threshold,
+                    "description": expense["description"],
+                    "message": (
+                        f"费用记录{expense['expense_id']}金额为"
+                        f"{amount:.2f}元，达到大额费用阈值"
+                        f"{amount_threshold:.2f}元"
+                    ),
+                }
+            )
+
+    return anomalies

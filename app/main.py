@@ -2,17 +2,25 @@ from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Query
 
-from .budget_service import analyze_department_budget,analyze_budget_anomalies
 from .report_service import generate_budget_report
+from .schemas import (
+    BudgetAnalysisItem,
+    BudgetAnomalyItem,
+    BudgetReportResponse,
+    DepartmentItem,
+    LargeExpenseResponse,
+    MonthOverMonthGrowthResponse,
+)
 
-from .schemas import BudgetAnalysisItem,BudgetAnomalyItem,BudgetReportResponse,MonthOverMonthGrowthResponse
 from .budget_service import (
+    analyze_budget_anomalies,
     analyze_department_budget,
+    analyze_large_expenses,
+    analyze_month_over_month_growth,
     get_available_months,
     get_departments,
-    analyze_month_over_month_growth,
 )
-from .schemas import BudgetAnalysisItem, DepartmentItem
+
 
 
     
@@ -22,6 +30,47 @@ app = FastAPI(
     version="0.1.0",
 )
 
+@app.get(
+    "/large-expense-anomalies",
+    response_model=LargeExpenseResponse,
+)
+def get_large_expense_anomalies(
+    month: Annotated[
+        str,
+        Query(
+            pattern=r"^\d{4}-(0[1-9]|1[0-2])$",
+            description="统计月份，格式为 YYYY-MM",
+        ),
+    ],
+    department_id: Annotated[
+        str,
+        Query(
+            pattern=r"^D\d{3}$",
+            description="部门编号",
+        ),
+    ],
+    amount_threshold: Annotated[
+        float,
+        Query(
+            ge=0,
+            description="单笔大额费用阈值",
+        ),
+    ] = 20000.0,
+) -> dict[str, object]:
+    """查询单笔大额费用异常。"""
+
+    try:
+        return analyze_large_expenses(
+            month=month,
+            department_id=department_id,
+            amount_threshold=amount_threshold,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail=str(exc),
+        ) from exc
+    
 @app.get(
     "/budget-report",
     response_model=BudgetReportResponse,

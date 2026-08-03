@@ -253,3 +253,50 @@ def test_missing_expense_growth_data_returns_404() -> None:
     assert response.json() == {
         "detail": "未找到对应的预算数据",
     }
+
+def test_large_expense_anomalies_endpoint() -> None:
+    """大额费用接口应返回两笔异常记录。"""
+
+    response = client.get(
+        "/large-expense-anomalies",
+        params={
+            "month": "2026-07",
+            "department_id": "D001",
+            "amount_threshold": 20000,
+        },
+    )
+
+    assert response.status_code == 200
+
+    result = response.json()
+
+    assert result["expense_count"] == 5
+    assert result["anomaly_count"] == 2
+
+    anomaly_ids = {
+        item["expense_id"]
+        for item in result["anomalies"]
+    }
+
+    assert anomaly_ids == {
+        "E007",
+        "E008",
+    }
+
+
+def test_missing_large_expense_data_returns_404() -> None:
+    """预算数据不存在时应返回404。"""
+
+    response = client.get(
+        "/large-expense-anomalies",
+        params={
+            "month": "2026-08",
+            "department_id": "D001",
+            "amount_threshold": 20000,
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "未找到对应的预算数据",
+    }
