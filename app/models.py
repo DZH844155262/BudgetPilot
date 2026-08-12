@@ -6,10 +6,11 @@ from sqlalchemy import (
     ForeignKey,
     Numeric,
     String,
+    Text,
     UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-
+from pgvector.sqlalchemy import VECTOR
 
 class Base(DeclarativeBase):
     """所有数据库表模型的基础类."""
@@ -95,4 +96,50 @@ class Expense(Base):
     description: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
+    )
+
+class PolicyChunk(Base):
+    """预算制度文档块及其语义向量。"""
+
+    __tablename__ = "policy_chunks"
+
+    chunk_id: Mapped[str] = mapped_column(
+        String(150),
+        primary_key=True,
+    )
+
+    source: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+        index=True,
+    )
+
+    path: Mapped[str] = mapped_column(
+        String(500),
+        nullable=False,
+    )
+
+    document_title: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+
+    section_title: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+
+    subsection_title: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+
+    content: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+    )
+
+    embedding: Mapped[list[float]] = mapped_column(
+        VECTOR(512),
+        nullable=False,
     )

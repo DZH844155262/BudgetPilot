@@ -1,0 +1,426 @@
+{
+  "dataset_name": "budgetpilot_policy_retrieval_smoke_v1",
+  "retrieval_method": "vector_only",
+  "embedding_model": "BAAI/bge-small-zh-v1.5",
+  "generated_at": "2026-08-04T17:15:02+08:00",
+  "summary": {
+    "case_count": 12,
+    "top_k": 3,
+    "top1_accuracy": 0.8333,
+    "recall_at_k": 1.0,
+    "mrr": 0.8889,
+    "ndcg_at_k": 0.9167,
+    "top1_hit_count": 10,
+    "recall_hit_count": 12
+  },
+  "cases": [
+    {
+      "case_id": "budget_warning_001",
+      "query": "预算执行率只有85%属于什么状态？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "二、预算执行预警",
+      "expected_rank": 1,
+      "top1_hit": true,
+      "recall_hit": true,
+      "reciprocal_rank": 1.0,
+      "ndcg": 1.0,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业预算管理制度",
+          "section_title": "二、预算执行预警",
+          "chunk_id": "budget_management_policy-002",
+          "similarity_score": 0.7011
+        },
+        {
+          "rank": 2,
+          "document_title": "企业预算管理制度",
+          "section_title": "五、管理责任",
+          "chunk_id": "budget_management_policy-005",
+          "similarity_score": 0.5263
+        },
+        {
+          "rank": 3,
+          "document_title": "企业预算管理制度",
+          "section_title": "一、适用范围",
+          "chunk_id": "budget_management_policy-001",
+          "similarity_score": 0.4804
+        }
+      ]
+    },
+    {
+      "case_id": "budget_warning_002",
+      "query": "预算执行率达到95%时需要采取什么措施？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "二、预算执行预警",
+      "expected_rank": 1,
+      "top1_hit": true,
+      "recall_hit": true,
+      "reciprocal_rank": 1.0,
+      "ndcg": 1.0,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业预算管理制度",
+          "section_title": "二、预算执行预警",
+          "chunk_id": "budget_management_policy-002",
+          "similarity_score": 0.6663
+        },
+        {
+          "rank": 2,
+          "document_title": "企业预算管理制度",
+          "section_title": "五、管理责任",
+          "chunk_id": "budget_management_policy-005",
+          "similarity_score": 0.5206
+        },
+        {
+          "rank": 3,
+          "document_title": "企业预算管理制度",
+          "section_title": "四、预算调整",
+          "chunk_id": "budget_management_policy-004",
+          "similarity_score": 0.513
+        }
+      ]
+    },
+    {
+      "case_id": "budget_warning_003",
+      "query": "部门已经超预算，需要在几个工作日内提交说明？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "二、预算执行预警",
+      "expected_rank": 1,
+      "top1_hit": true,
+      "recall_hit": true,
+      "reciprocal_rank": 1.0,
+      "ndcg": 1.0,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业预算管理制度",
+          "section_title": "二、预算执行预警",
+          "chunk_id": "budget_management_policy-002",
+          "similarity_score": 0.6447
+        },
+        {
+          "rank": 2,
+          "document_title": "企业预算管理制度",
+          "section_title": "四、预算调整",
+          "chunk_id": "budget_management_policy-004",
+          "similarity_score": 0.6215
+        },
+        {
+          "rank": 3,
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "chunk_id": "budget_management_policy-003",
+          "similarity_score": 0.5858
+        }
+      ]
+    },
+    {
+      "case_id": "growth_review_001",
+      "query": "本月费用比上个月增长20%以上需要怎么处理？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "三、费用环比增长",
+      "expected_rank": 1,
+      "top1_hit": true,
+      "recall_hit": true,
+      "reciprocal_rank": 1.0,
+      "ndcg": 1.0,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "chunk_id": "budget_management_policy-003",
+          "similarity_score": 0.718
+        },
+        {
+          "rank": 2,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "二、单笔大额费用",
+          "chunk_id": "expense_reimbursement_policy-002",
+          "similarity_score": 0.5445
+        },
+        {
+          "rank": 3,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "五、异常费用处理",
+          "chunk_id": "expense_reimbursement_policy-005",
+          "similarity_score": 0.5225
+        }
+      ]
+    },
+    {
+      "case_id": "budget_adjustment_001",
+      "query": "申请预算调整时需要提交哪些信息？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "四、预算调整",
+      "expected_rank": 1,
+      "top1_hit": true,
+      "recall_hit": true,
+      "reciprocal_rank": 1.0,
+      "ndcg": 1.0,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业预算管理制度",
+          "section_title": "四、预算调整",
+          "chunk_id": "budget_management_policy-004",
+          "similarity_score": 0.7571
+        },
+        {
+          "rank": 2,
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "chunk_id": "budget_management_policy-003",
+          "similarity_score": 0.5351
+        },
+        {
+          "rank": 3,
+          "document_title": "企业预算管理制度",
+          "section_title": "二、预算执行预警",
+          "chunk_id": "budget_management_policy-002",
+          "similarity_score": 0.5308
+        }
+      ]
+    },
+    {
+      "case_id": "budget_adjustment_002",
+      "query": "预算调整没有批准，可以提前执行吗？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "四、预算调整",
+      "expected_rank": 1,
+      "top1_hit": true,
+      "recall_hit": true,
+      "reciprocal_rank": 1.0,
+      "ndcg": 1.0,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业预算管理制度",
+          "section_title": "四、预算调整",
+          "chunk_id": "budget_management_policy-004",
+          "similarity_score": 0.6567
+        },
+        {
+          "rank": 2,
+          "document_title": "企业预算管理制度",
+          "section_title": "二、预算执行预警",
+          "chunk_id": "budget_management_policy-002",
+          "similarity_score": 0.5908
+        },
+        {
+          "rank": 3,
+          "document_title": "企业预算管理制度",
+          "section_title": "一、适用范围",
+          "chunk_id": "budget_management_policy-001",
+          "similarity_score": 0.512
+        }
+      ]
+    },
+    {
+      "case_id": "reimbursement_basic_001",
+      "query": "费用报销时需要提供哪些有效凭证？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "一、报销基本要求",
+      "expected_rank": 1,
+      "top1_hit": true,
+      "recall_hit": true,
+      "reciprocal_rank": 1.0,
+      "ndcg": 1.0,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "一、报销基本要求",
+          "chunk_id": "expense_reimbursement_policy-001",
+          "similarity_score": 0.7661
+        },
+        {
+          "rank": 2,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "五、异常费用处理",
+          "chunk_id": "expense_reimbursement_policy-005",
+          "similarity_score": 0.6332
+        },
+        {
+          "rank": 3,
+          "document_title": "企业费用报销管理制度",
+          "section_title": null,
+          "chunk_id": "expense_reimbursement_policy-000",
+          "similarity_score": 0.5675
+        }
+      ]
+    },
+    {
+      "case_id": "large_expense_001",
+      "query": "单笔费用达到20000元需要谁复核？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "二、单笔大额费用",
+      "expected_rank": 1,
+      "top1_hit": true,
+      "recall_hit": true,
+      "reciprocal_rank": 1.0,
+      "ndcg": 1.0,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "二、单笔大额费用",
+          "chunk_id": "expense_reimbursement_policy-002",
+          "similarity_score": 0.7197
+        },
+        {
+          "rank": 2,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "五、异常费用处理",
+          "chunk_id": "expense_reimbursement_policy-005",
+          "similarity_score": 0.5059
+        },
+        {
+          "rank": 3,
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "chunk_id": "budget_management_policy-003",
+          "similarity_score": 0.5029
+        }
+      ]
+    },
+    {
+      "case_id": "large_expense_002",
+      "query": "单笔费用达到50000元还需要谁审批？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "二、单笔大额费用",
+      "expected_rank": 1,
+      "top1_hit": true,
+      "recall_hit": true,
+      "reciprocal_rank": 1.0,
+      "ndcg": 1.0,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "二、单笔大额费用",
+          "chunk_id": "expense_reimbursement_policy-002",
+          "similarity_score": 0.7054
+        },
+        {
+          "rank": 2,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "一、报销基本要求",
+          "chunk_id": "expense_reimbursement_policy-001",
+          "similarity_score": 0.4883
+        },
+        {
+          "rank": 3,
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "chunk_id": "budget_management_policy-003",
+          "similarity_score": 0.478
+        }
+      ]
+    },
+    {
+      "case_id": "travel_expense_001",
+      "query": "差旅住宿超过公司标准应该怎么办？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "三、差旅费用",
+      "expected_rank": 1,
+      "top1_hit": true,
+      "recall_hit": true,
+      "reciprocal_rank": 1.0,
+      "ndcg": 1.0,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "三、差旅费用",
+          "chunk_id": "expense_reimbursement_policy-003",
+          "similarity_score": 0.7475
+        },
+        {
+          "rank": 2,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "五、异常费用处理",
+          "chunk_id": "expense_reimbursement_policy-005",
+          "similarity_score": 0.388
+        },
+        {
+          "rank": 3,
+          "document_title": "企业预算管理制度",
+          "section_title": "一、适用范围",
+          "chunk_id": "budget_management_policy-001",
+          "similarity_score": 0.3864
+        }
+      ]
+    },
+    {
+      "case_id": "software_service_001",
+      "query": "软件订阅费用报销需要提供哪些材料？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "四、软件与服务费用",
+      "expected_rank": 3,
+      "top1_hit": false,
+      "recall_hit": true,
+      "reciprocal_rank": 0.3333,
+      "ndcg": 0.5,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "一、报销基本要求",
+          "chunk_id": "expense_reimbursement_policy-001",
+          "similarity_score": 0.6799
+        },
+        {
+          "rank": 2,
+          "document_title": "企业费用报销管理制度",
+          "section_title": null,
+          "chunk_id": "expense_reimbursement_policy-000",
+          "similarity_score": 0.6283
+        },
+        {
+          "rank": 3,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "四、软件与服务费用",
+          "chunk_id": "expense_reimbursement_policy-004",
+          "similarity_score": 0.6251
+        }
+      ]
+    },
+    {
+      "case_id": "software_service_002",
+      "query": "服务类费用报销时怎样证明服务已经完成？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "四、软件与服务费用",
+      "expected_rank": 3,
+      "top1_hit": false,
+      "recall_hit": true,
+      "reciprocal_rank": 0.3333,
+      "ndcg": 0.5,
+      "retrieved_results": [
+        {
+          "rank": 1,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "一、报销基本要求",
+          "chunk_id": "expense_reimbursement_policy-001",
+          "similarity_score": 0.6824
+        },
+        {
+          "rank": 2,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "五、异常费用处理",
+          "chunk_id": "expense_reimbursement_policy-005",
+          "similarity_score": 0.6182
+        },
+        {
+          "rank": 3,
+          "document_title": "企业费用报销管理制度",
+          "section_title": "四、软件与服务费用",
+          "chunk_id": "expense_reimbursement_policy-004",
+          "similarity_score": 0.5738
+        }
+      ]
+    }
+  ]
+}

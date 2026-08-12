@@ -25,3 +25,20 @@ venv/
 # 系统文件
 .DS_Store
 Thumbs.db
+
+# 日志
+logs/
+*.log
+
+# Next.js / Node
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# 构建产物
+dist/
+build/
+*.egg-info/
+
+# 其他 Python 工具缓存
+.mypy_cache/

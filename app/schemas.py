@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -231,3 +231,211 @@ class RiskOverviewResponse(BaseModel):
     budget_anomalies: list[BudgetAnomalyItem]
     growth_anomalies: list[MonthOverMonthGrowthItem]
     large_expense_anomalies: list[LargeExpenseItem]
+
+class PolicySearchItem(BaseModel):
+    """单个制度检索结果。"""
+
+    chunk_id: str = Field(
+        description="制度文档块唯一编号",
+    )
+
+    source: str = Field(
+        description="来源文件名",
+    )
+
+    path: str = Field(
+        description="来源文件相对路径",
+    )
+
+    content: str = Field(
+        description="检索到的制度原文",
+    )
+
+    similarity_score: float = Field(
+        description="语义相似度，数值越大表示越相关",
+        ge=-1,
+        le=1,
+    )
+    document_title: str | None = Field(
+    default=None,
+    description="制度名称",
+)
+
+    section_title: str | None = Field(
+    default=None,
+    description="制度章节名称",
+)
+
+    subsection_title: str | None = Field(
+    default=None,
+    description="制度子章节名称",
+)
+
+
+class PolicySearchResponse(BaseModel):
+    """预算制度语义检索结果。"""
+
+    query: str = Field(
+        description="用户原始检索问题",
+    )
+
+    top_k: int = Field(
+        description="请求返回的最大结果数量",
+        ge=1,
+        le=10,
+    )
+
+    result_count: int = Field(
+        description="实际返回的结果数量",
+        ge=0,
+    )
+
+    results: list[PolicySearchItem]
+
+class PolicyAnswerRequest(BaseModel):
+    """制度问答请求。"""
+
+    query: str = Field(
+        min_length=1,
+        max_length=500,
+        description="用户提出的制度问题",
+        examples=[
+            "单笔费用达到20000元需要谁复核？"
+        ],
+    )
+
+    top_k: int = Field(
+        default=3,
+        ge=1,
+        le=10,
+        description="用于回答的制度片段数量",
+    )
+
+
+class PolicyAnswerSource(BaseModel):
+    """制度回答引用来源。"""
+
+    citation: str = Field(
+        description="回答中的引用编号，例如[1]",
+    )
+
+    chunk_id: str = Field(
+        description="制度文档块唯一编号",
+    )
+
+    source: str = Field(
+        description="制度来源文件名",
+    )
+
+    document_title: str | None = Field(
+        default=None,
+        description="制度名称",
+    )
+
+    section_title: str | None = Field(
+        default=None,
+        description="制度章节名称",
+    )
+
+    similarity_score: float = Field(
+        description="检索相似度",
+        ge=-1,
+        le=1,
+    )
+
+
+class PolicyAnswerResponse(BaseModel):
+    """带制度引用的RAG回答。"""
+
+    query: str = Field(
+        description="用户提出的问题",
+    )
+
+    answer: str = Field(
+        description="大模型依据制度生成的回答",
+    )
+
+    model: str = Field(
+        description="生成回答所使用的模型",
+    )
+
+    source_count: int = Field(
+        ge=0,
+        description="引用来源数量",
+    )
+
+    sources: list[PolicyAnswerSource]
+
+class AgentChatResponse(BaseModel):
+    """BudgetPilot Agent统一响应。"""
+
+    thread_id: str
+
+    status: str
+
+    requires_approval: bool = False
+
+    approval_request: dict[str, Any] | None = None
+
+    answer: str
+
+    intent: Literal[
+        "budget_analysis",
+        "risk_overview",
+        "policy_question",
+        "budget_report",
+        "unknown",
+    ]
+
+    routing_source: str | None = None
+    route_reason: str | None = None
+
+    department_id: str | None = None
+    month: str | None = None
+
+    trace: list[str] = Field(
+        default_factory=list,
+    )
+
+    details: dict[str, Any] | None = None
+
+
+
+
+class AgentChatRequest(BaseModel):
+    """BudgetPilot Agent聊天请求。"""
+
+    message: str = Field(
+        ...,
+        min_length=1,
+        max_length=1000,
+        description="用户发送给Agent的自然语言问题",
+    )
+
+    thread_id: str | None = Field(
+        default=None,
+        description=(
+            "会话ID。首次请求为空，"
+            "后续请求使用服务端返回的同一个thread_id。"
+        ),
+    )
+
+
+
+
+class AgentResumeRequest(BaseModel):
+    """恢复一个等待人工确认的Agent任务。"""
+
+    thread_id: str = Field(
+        ...,
+        min_length=1,
+        description="等待恢复的LangGraph会话ID",
+    )
+
+    approved: bool = Field(
+        ...,
+        description=(
+            "true表示批准执行，"
+            "false表示拒绝执行"
+        ),
+    )

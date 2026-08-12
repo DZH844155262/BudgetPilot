@@ -1,0 +1,242 @@
+{
+  "generated_at": "2026-08-04T19:39:07+08:00",
+  "evaluation_method": "deepeval_llm_judge",
+  "threshold": 0.7,
+  "summary": {
+    "faithfulness": {
+      "case_count": 5,
+      "average_score": 1.0,
+      "pass_rate": 1.0
+    },
+    "answer_relevancy": {
+      "case_count": 5,
+      "average_score": 1.0,
+      "pass_rate": 1.0
+    },
+    "contextual_relevancy": {
+      "case_count": 5,
+      "average_score": 0.43,
+      "pass_rate": 0.0
+    }
+  },
+  "cases": [
+    {
+      "case_id": "large_expense_20000",
+      "query": "单笔费用达到20000元需要谁复核？",
+      "should_refuse": false,
+      "answer": "单笔费用达到20000元时，应提交部门负责人和财务人员复核。[1]",
+      "generator_model": "deepseek-v4-flash",
+      "judge_model": "deepseek-v4-flash",
+      "retrieved_sources": [
+        {
+          "citation": "[1]",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "二、单笔大额费用",
+          "similarity_score": 0.7197
+        },
+        {
+          "citation": "[2]",
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "similarity_score": 0.5029
+        }
+      ],
+      "metrics": {
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context, indicating perfect faithfulness. Great job!"
+        },
+        "answer_relevancy": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because the actual output perfectly addresses the input question without any irrelevant statements, demonstrating complete relevance and accuracy."
+        },
+        "contextual_relevancy": {
+          "score": 0.2,
+          "passed": false,
+          "reason": "The score is 0.20 because only one statement in the retrieval context directly answers the input question about who reviews a single expense of 20000 yuan, while the other four statements are irrelevant as they discuss 50000 yuan approval, required attachments, expense growth checks, and expense growth explanations, none of which pertain to the 20000 yuan review process."
+        }
+      }
+    },
+    {
+      "case_id": "large_expense_50000",
+      "query": "单笔费用达到50000元还需要谁审批？",
+      "should_refuse": false,
+      "answer": "单笔费用达到50000元时，除部门负责人和财务人员审核外，还应提交公司分管负责人审批[1]。",
+      "generator_model": "deepseek-v4-flash",
+      "judge_model": "deepseek-v4-flash",
+      "retrieved_sources": [
+        {
+          "citation": "[1]",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "二、单笔大额费用",
+          "similarity_score": 0.7054
+        },
+        {
+          "citation": "[2]",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "五、异常费用处理",
+          "similarity_score": 0.4631
+        }
+      ],
+      "metrics": {
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context, indicating perfect faithfulness."
+        },
+        "answer_relevancy": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because the actual output directly and fully addresses the input question about approval for single expenses reaching 50000 yuan, with no irrelevant statements detected."
+        },
+        "contextual_relevancy": {
+          "score": 0.25,
+          "passed": false,
+          "reason": "The score is 0.25 because only one statement in the retrieval context directly addresses the input's query about approval for a single expense of 50000 yuan, while the other statements are irrelevant as they discuss 20000 yuan approval, required attachments, and abnormal expense handling, which do not answer the question."
+        }
+      }
+    },
+    {
+      "case_id": "over_budget_deadline",
+      "query": "部门已经超预算，需要在几个工作日内提交什么材料？",
+      "should_refuse": false,
+      "answer": "根据制度规定，部门超预算后，应在**三个工作日**内向财务部门提交**超预算原因说明和处理方案**[1]。",
+      "generator_model": "deepseek-v4-flash",
+      "judge_model": "deepseek-v4-flash",
+      "retrieved_sources": [
+        {
+          "citation": "[1]",
+          "document_title": "企业预算管理制度",
+          "section_title": "二、预算执行预警",
+          "similarity_score": 0.6149
+        },
+        {
+          "citation": "[2]",
+          "document_title": "企业预算管理制度",
+          "section_title": "四、预算调整",
+          "similarity_score": 0.6004
+        }
+      ],
+      "metrics": {
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context, indicating perfect faithfulness. Great job!"
+        },
+        "answer_relevancy": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because the actual output contains no irrelevant statements and directly addresses the input question about submitting materials after exceeding the budget."
+        },
+        "contextual_relevancy": {
+          "score": 0.6,
+          "passed": false,
+          "reason": "The score is 0.60 because the retrieval context contains some relevant statements, such as '预算执行率超过100%时，属于超预算。相关部门应暂停非必要支出，并在三个工作日内向财务部门提交超预算原因说明和处理方案。' which directly addresses the input's query about submitting materials after exceeding budget, and '预算调整申请应说明调整金额、调整原因、资金来源和预计业务效果' which provides additional relevant details. However, other statements are irrelevant, such as '该语句描述的是预算执行率低于90%的正常状态' and '该语句描述的是预算预警情况', which do not pertain to the input's specific question about submitting materials after exceeding budget. Thus, the score reflects partial relevance."
+        }
+      }
+    },
+    {
+      "case_id": "growth_review",
+      "query": "本月费用比上个月增长20%以上应该怎么处理？",
+      "should_refuse": false,
+      "answer": "根据制度规定，某费用科目本月实际支出较上月增长达到20%时，应列为重点核查事项。部门应说明增长原因，并提供相应合同、采购申请、费用明细或业务活动证明。[1]",
+      "generator_model": "deepseek-v4-flash",
+      "judge_model": "deepseek-v4-flash",
+      "retrieved_sources": [
+        {
+          "citation": "[1]",
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "similarity_score": 0.716
+        },
+        {
+          "citation": "[2]",
+          "document_title": "企业预算管理制度",
+          "section_title": "二、预算执行预警",
+          "similarity_score": 0.4744
+        }
+      ],
+      "metrics": {
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context, indicating perfect faithfulness. Great job!"
+        },
+        "answer_relevancy": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because the actual output directly and comprehensively addresses the input question about handling a month-over-month cost increase of over 20%, with no irrelevant statements detected."
+        },
+        "contextual_relevancy": {
+          "score": 0.6,
+          "passed": false,
+          "reason": "The score is 0.60 because the retrieval context contains some relevant statements, such as '某费用科目的本月实际支出较上月增长达到20%时，应列为重点核查事项' and '部门应说明增长原因，并提供相应合同、采购申请、费用明细或业务活动证明', which directly address handling a month-over-month cost increase of more than 20%. However, other statements about budget execution rate below 90% being normal and between 90% and 100% triggering a warning are irrelevant to the input, as they do not pertain to the specific scenario of a >20% month-over-month increase. The presence of both relevant and irrelevant statements results in a moderate score."
+        }
+      }
+    },
+    {
+      "case_id": "software_service_materials",
+      "query": "软件和服务类费用报销需要提供哪些材料？",
+      "should_refuse": false,
+      "answer": "根据制度上下文，软件和服务类费用报销需要提供合法有效的发票、合同、付款记录或其他证明材料[1]，并应明确服务期限、使用部门和合同金额[2]。",
+      "generator_model": "deepseek-v4-flash",
+      "judge_model": "deepseek-v4-flash",
+      "retrieved_sources": [
+        {
+          "citation": "[1]",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "一、报销基本要求",
+          "similarity_score": 0.6945
+        },
+        {
+          "citation": "[2]",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "四、软件与服务费用",
+          "similarity_score": 0.6345
+        }
+      ],
+      "metrics": {
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context, indicating perfect faithfulness."
+        },
+        "answer_relevancy": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because the actual output perfectly addresses the input question about required materials for software and service expense reimbursement, with no irrelevant statements detected."
+        },
+        "contextual_relevancy": {
+          "score": 0.5,
+          "passed": false,
+          "reason": "The score is 0.50 because the retrieval context contains some relevant statements about required materials for expense reimbursement, such as '费用报销必须具有真实业务背景，并提供合法有效的发票、合同、付款记录或其他证明材料' and '软件订阅、云服务和外包服务费用应明确服务期限、使用部门和合同金额', which directly address the input. However, other statements are irrelevant, like '该语句涉及报销填写要求，但未具体说明软件和服务类费用报销所需材料' and '该语句涉及自动续费项目的评估，与报销所需材料无关', which do not answer the specific question about software and service expenses. Thus, the context is partially relevant."
+        }
+      }
+    },
+    {
+      "case_id": "unsupported_marriage_leave",
+      "query": "员工结婚最多可以休多少天婚假？",
+      "should_refuse": true,
+      "answer": "现有制度资料不足以回答该问题。",
+      "generator_model": "deepseek-v4-flash",
+      "judge_model": "deepseek-v4-flash",
+      "retrieved_sources": [
+        {
+          "citation": "[1]",
+          "document_title": "企业预算管理制度",
+          "section_title": "一、适用范围",
+          "similarity_score": 0.3865
+        },
+        {
+          "citation": "[2]",
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "similarity_score": 0.3708
+        }
+      ],
+      "metrics": {}
+    }
+  ]
+}

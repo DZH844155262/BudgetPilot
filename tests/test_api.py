@@ -338,3 +338,148 @@ def test_missing_risk_overview_returns_404() -> None:
     )
 
     assert response.status_code == 404
+
+def test_policy_search_endpoint() -> None:
+    """制度检索接口应返回相关制度及来源。"""
+
+    response = client.get(
+        "/policy-search",
+        params={
+            "query": "单笔费用达到20000元需要谁复核？",
+            "top_k": 2,
+        },
+    )
+
+    assert response.status_code == 200
+
+    result = response.json()
+
+    assert result["query"] == (
+        "单笔费用达到20000元需要谁复核？"
+    )
+    assert result["result_count"] == 2
+
+    first_result = result["results"][0]
+
+    assert (
+        first_result["source"]
+        == "expense_reimbursement_policy.md"
+    )
+    assert "20000元" in first_result["content"]
+    assert first_result["similarity_score"] > 0
+
+
+def test_invalid_policy_search_top_k_returns_422() -> None:
+    """非法top_k应在进入业务层前返回422。"""
+
+    response = client.get(
+        "/policy-search",
+        params={
+            "query": "超预算如何处理？",
+            "top_k": 0,
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_blank_policy_search_returns_400() -> None:
+    """空白制度问题应返回400。"""
+
+    response = client.get(
+        "/policy-search",
+        params={
+            "query": "   ",
+            "top_k": 3,
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "检索问题不能为空",
+    }
+
+def test_policy_answer_endpoint(
+    monkeypatch,
+) -> None:
+    """制度问答接口应返回回答和引用来源。"""
+
+    def fake_answer_policy_question(
+        query: str,
+        top_k: int,
+    ) -> dict[str, object]:
+        return {
+            "query": query,
+            "answer": (
+                "单笔费用达到20000元时，"
+                "应由部门负责人和财务人员复核。[1]"
+            ),
+            "model": "test-model",
+            "source_count": 1,
+            "sources": [
+                {
+                    "citation": "[1]",
+                    "chunk_id": (
+                        "expense_reimbursement_policy-002"
+                    ),
+                    "source": (
+                        "expense_reimbursement_policy.md"
+                    ),
+                    "document_title": (
+                        "企业费用报销管理制度"
+                    ),
+                    "section_title": (
+                        "二、单笔大额费用"
+                    ),
+                    "similarity_score": 0.7197,
+                }
+            ],
+        }
+
+    monkeypatch.setattr(
+        "app.main.answer_policy_question",
+        fake_answer_policy_question,
+    )
+
+    response = client.post(
+        "/policy-answer",
+        json={
+            "query": (
+                "单笔费用达到20000元需要谁复核？"
+            ),
+            "top_k": 3,
+        },
+    )
+
+    assert response.status_code == 200
+
+    result = response.json()
+
+    assert "部门负责人" in result["answer"]
+    assert "[1]" in result["answer"]
+    assert result["source_count"] == 1
+
+    first_source = result["sources"][0]
+
+    assert (
+        first_source["document_title"]
+        == "企业费用报销管理制度"
+    )
+    assert (
+        first_source["section_title"]
+        == "二、单笔大额费用"
+    )
+
+
+def test_policy_answer_invalid_top_k_returns_422() -> None:
+    """非法top_k应返回422。"""
+
+    response = client.post(
+        "/policy-answer",
+        json={
+            "query": "超预算以后如何处理？",
+            "top_k": 0,
+        },
+    )
+
+    assert response.status_code == 422

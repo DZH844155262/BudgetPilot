@@ -1,0 +1,270 @@
+{
+  "dataset_name": "budgetpilot_policy_generation_smoke_v1",
+  "evaluation_method": "deterministic_rule_evaluation",
+  "generated_at": "2026-08-04T17:32:58+08:00",
+  "summary": {
+    "case_count": 6,
+    "pass_count": 4,
+    "pass_rate": 0.6667,
+    "keyword_pass_rate": 0.6667,
+    "forbidden_pass_rate": 1.0,
+    "source_pass_rate": 1.0,
+    "citation_pass_rate": 1.0,
+    "refusal_pass_rate": 1.0,
+    "average_latency_seconds": 2.185
+  },
+  "cases": [
+    {
+      "case_id": "large_expense_20000",
+      "query": "单笔费用达到20000元需要谁复核？",
+      "answer": "单笔费用达到20000元时，应提交部门负责人和财务人员复核。[1]",
+      "model": "deepseek-v4-flash",
+      "passed": true,
+      "keyword_pass": true,
+      "forbidden_pass": true,
+      "source_pass": true,
+      "citation_pass": true,
+      "refusal_pass": true,
+      "over_refusal_pass": true,
+      "latency_seconds": 7.841,
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "二、单笔大额费用",
+      "sources": [
+        {
+          "citation": "[1]",
+          "chunk_id": "expense_reimbursement_policy-002",
+          "source": "expense_reimbursement_policy.md",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "二、单笔大额费用",
+          "similarity_score": 0.7197
+        },
+        {
+          "citation": "[2]",
+          "chunk_id": "expense_reimbursement_policy-005",
+          "source": "expense_reimbursement_policy.md",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "五、异常费用处理",
+          "similarity_score": 0.5059
+        },
+        {
+          "citation": "[3]",
+          "chunk_id": "budget_management_policy-003",
+          "source": "budget_management_policy.md",
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "similarity_score": 0.5029
+        }
+      ]
+    },
+    {
+      "case_id": "large_expense_50000",
+      "query": "单笔费用达到50000元还需要谁审批？",
+      "answer": "单笔费用达到50000元时，除部门负责人和财务人员审核外，还应提交公司分管负责人审批。[1]",
+      "model": "deepseek-v4-flash",
+      "passed": true,
+      "keyword_pass": true,
+      "forbidden_pass": true,
+      "source_pass": true,
+      "citation_pass": true,
+      "refusal_pass": true,
+      "over_refusal_pass": true,
+      "latency_seconds": 1.428,
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "二、单笔大额费用",
+      "sources": [
+        {
+          "citation": "[1]",
+          "chunk_id": "expense_reimbursement_policy-002",
+          "source": "expense_reimbursement_policy.md",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "二、单笔大额费用",
+          "similarity_score": 0.7054
+        },
+        {
+          "citation": "[2]",
+          "chunk_id": "expense_reimbursement_policy-001",
+          "source": "expense_reimbursement_policy.md",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "一、报销基本要求",
+          "similarity_score": 0.4883
+        },
+        {
+          "citation": "[3]",
+          "chunk_id": "budget_management_policy-003",
+          "source": "budget_management_policy.md",
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "similarity_score": 0.478
+        }
+      ]
+    },
+    {
+      "case_id": "over_budget_deadline",
+      "query": "部门已经超预算，需要在几个工作日内提交什么材料？",
+      "answer": "部门超预算后，应在三个工作日内向财务部门提交超预算原因说明和处理方案[1]。",
+      "model": "deepseek-v4-flash",
+      "passed": true,
+      "keyword_pass": true,
+      "forbidden_pass": true,
+      "source_pass": true,
+      "citation_pass": true,
+      "refusal_pass": true,
+      "over_refusal_pass": true,
+      "latency_seconds": 0.926,
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "二、预算执行预警",
+      "sources": [
+        {
+          "citation": "[1]",
+          "chunk_id": "budget_management_policy-002",
+          "source": "budget_management_policy.md",
+          "document_title": "企业预算管理制度",
+          "section_title": "二、预算执行预警",
+          "similarity_score": 0.6149
+        },
+        {
+          "citation": "[2]",
+          "chunk_id": "budget_management_policy-004",
+          "source": "budget_management_policy.md",
+          "document_title": "企业预算管理制度",
+          "section_title": "四、预算调整",
+          "similarity_score": 0.6004
+        },
+        {
+          "citation": "[3]",
+          "chunk_id": "budget_management_policy-003",
+          "source": "budget_management_policy.md",
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "similarity_score": 0.5802
+        }
+      ]
+    },
+    {
+      "case_id": "growth_review",
+      "query": "本月费用比上个月增长20%以上应该怎么处理？",
+      "answer": "本月费用较上月增长达到20%时，应列为重点核查事项，部门需说明增长原因，并提供相应合同、采购申请、费用明细或业务活动证明[1]。",
+      "model": "deepseek-v4-flash",
+      "passed": false,
+      "keyword_pass": false,
+      "forbidden_pass": true,
+      "source_pass": true,
+      "citation_pass": true,
+      "refusal_pass": true,
+      "over_refusal_pass": true,
+      "latency_seconds": 0.917,
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "三、费用环比增长",
+      "sources": [
+        {
+          "citation": "[1]",
+          "chunk_id": "budget_management_policy-003",
+          "source": "budget_management_policy.md",
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "similarity_score": 0.716
+        },
+        {
+          "citation": "[2]",
+          "chunk_id": "expense_reimbursement_policy-002",
+          "source": "expense_reimbursement_policy.md",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "二、单笔大额费用",
+          "similarity_score": 0.5223
+        },
+        {
+          "citation": "[3]",
+          "chunk_id": "expense_reimbursement_policy-005",
+          "source": "expense_reimbursement_policy.md",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "五、异常费用处理",
+          "similarity_score": 0.5096
+        }
+      ]
+    },
+    {
+      "case_id": "software_service_materials",
+      "query": "软件和服务类费用报销需要提供哪些材料？",
+      "answer": "根据制度上下文，软件和服务类费用报销需要提供合法有效的发票、合同、付款记录或其他证明材料[1]，并应明确服务期限、使用部门和合同金额[2]。",
+      "model": "deepseek-v4-flash",
+      "passed": false,
+      "keyword_pass": false,
+      "forbidden_pass": true,
+      "source_pass": true,
+      "citation_pass": true,
+      "refusal_pass": true,
+      "over_refusal_pass": true,
+      "latency_seconds": 0.94,
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "四、软件与服务费用",
+      "sources": [
+        {
+          "citation": "[1]",
+          "chunk_id": "expense_reimbursement_policy-001",
+          "source": "expense_reimbursement_policy.md",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "一、报销基本要求",
+          "similarity_score": 0.6945
+        },
+        {
+          "citation": "[2]",
+          "chunk_id": "expense_reimbursement_policy-004",
+          "source": "expense_reimbursement_policy.md",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "四、软件与服务费用",
+          "similarity_score": 0.6345
+        },
+        {
+          "citation": "[3]",
+          "chunk_id": "expense_reimbursement_policy-000",
+          "source": "expense_reimbursement_policy.md",
+          "document_title": "企业费用报销管理制度",
+          "section_title": null,
+          "similarity_score": 0.6323
+        }
+      ]
+    },
+    {
+      "case_id": "unsupported_marriage_leave",
+      "query": "员工结婚最多可以休多少天婚假？",
+      "answer": "现有制度资料不足以回答该问题。",
+      "model": "deepseek-v4-flash",
+      "passed": true,
+      "keyword_pass": true,
+      "forbidden_pass": true,
+      "source_pass": true,
+      "citation_pass": true,
+      "refusal_pass": true,
+      "over_refusal_pass": true,
+      "latency_seconds": 1.061,
+      "expected_document_title": null,
+      "expected_section_title": null,
+      "sources": [
+        {
+          "citation": "[1]",
+          "chunk_id": "budget_management_policy-001",
+          "source": "budget_management_policy.md",
+          "document_title": "企业预算管理制度",
+          "section_title": "一、适用范围",
+          "similarity_score": 0.3865
+        },
+        {
+          "citation": "[2]",
+          "chunk_id": "budget_management_policy-003",
+          "source": "budget_management_policy.md",
+          "document_title": "企业预算管理制度",
+          "section_title": "三、费用环比增长",
+          "similarity_score": 0.3708
+        },
+        {
+          "citation": "[3]",
+          "chunk_id": "expense_reimbursement_policy-005",
+          "source": "expense_reimbursement_policy.md",
+          "document_title": "企业费用报销管理制度",
+          "section_title": "五、异常费用处理",
+          "similarity_score": 0.3524
+        }
+      ]
+    }
+  ]
+}

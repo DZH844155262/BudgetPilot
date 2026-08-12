@@ -1,0 +1,78 @@
+{
+  "dataset_name": "budgetpilot_policy_retrieval_smoke_v1",
+  "description": "BudgetPilot制度检索初始冒烟评测集",
+  "cases": [
+    {
+      "case_id": "budget_warning_001",
+      "query": "预算执行率只有85%属于什么状态？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "二、预算执行预警"
+    },
+    {
+      "case_id": "budget_warning_002",
+      "query": "预算执行率达到95%时需要采取什么措施？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "二、预算执行预警"
+    },
+    {
+      "case_id": "budget_warning_003",
+      "query": "部门已经超预算，需要在几个工作日内提交说明？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "二、预算执行预警"
+    },
+    {
+      "case_id": "growth_review_001",
+      "query": "本月费用比上个月增长20%以上需要怎么处理？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "三、费用环比增长"
+    },
+    {
+      "case_id": "budget_adjustment_001",
+      "query": "申请预算调整时需要提交哪些信息？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "四、预算调整"
+    },
+    {
+      "case_id": "budget_adjustment_002",
+      "query": "预算调整没有批准，可以提前执行吗？",
+      "expected_document_title": "企业预算管理制度",
+      "expected_section_title": "四、预算调整"
+    },
+    {
+      "case_id": "reimbursement_basic_001",
+      "query": "费用报销时需要提供哪些有效凭证？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "一、报销基本要求"
+    },
+    {
+      "case_id": "large_expense_001",
+      "query": "单笔费用达到20000元需要谁复核？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "二、单笔大额费用"
+    },
+    {
+      "case_id": "large_expense_002",
+      "query": "单笔费用达到50000元还需要谁审批？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "二、单笔大额费用"
+    },
+    {
+      "case_id": "travel_expense_001",
+      "query": "差旅住宿超过公司标准应该怎么办？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "三、差旅费用"
+    },
+    {
+      "case_id": "software_service_001",
+      "query": "软件订阅费用报销需要提供哪些材料？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "四、软件与服务费用"
+    },
+    {
+      "case_id": "software_service_002",
+      "query": "服务类费用报销时怎样证明服务已经完成？",
+      "expected_document_title": "企业费用报销管理制度",
+      "expected_section_title": "四、软件与服务费用"
+    }
+  ]
+}

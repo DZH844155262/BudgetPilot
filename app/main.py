@@ -1,6 +1,9 @@
 from typing import Annotated
-
+from .rag.rag_service import answer_policy_question
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import (
+    CORSMiddleware,
+)
 from .risk_service import generate_risk_overview
 from .report_service import generate_budget_report
 from .schemas import (
@@ -11,6 +14,12 @@ from .schemas import (
     LargeExpenseResponse,
     MonthOverMonthGrowthResponse,
     RiskOverviewResponse,
+    PolicySearchResponse,
+    PolicyAnswerRequest,
+    PolicyAnswerResponse,
+    AgentChatRequest,
+    AgentChatResponse,
+    AgentResumeRequest,
 )
 
 from .budget_service import (
@@ -22,15 +31,103 @@ from .budget_service import (
     get_departments,
 )
 
+from .rag.policy_retrieval_service import (
+    retrieve_policy_context,
+)
+from app.agent.agent_service import (
+    resume_budget_agent,
+    run_budget_agent,
+)
+import logging
 
+from app.logging_config import (
+    configure_logging,
+)
 
-    
+configure_logging()
+
+logger = logging.getLogger(
+    __name__
+)
 app = FastAPI(
     title="BudgetPilot API",
     description="企业预算与费用分析智能助手后端接口",
     version="0.1.0",
 )
+allowed_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+@app.post(
+    "/policy-answer",
+    response_model=PolicyAnswerResponse,
+)
+def generate_policy_answer(
+    request: PolicyAnswerRequest,
+) -> dict[str, object]:
+    """检索企业制度并生成带引用的回答。"""
+
+    try:
+        return answer_policy_question(
+            query=request.query,
+            top_k=request.top_k,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        ) from exc
+    except RuntimeError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="制度回答服务暂时不可用",
+        ) from exc
+@app.get(
+    "/policy-search",
+    response_model=PolicySearchResponse,
+)
+def search_policy_documents(
+    query: Annotated[
+        str,
+        Query(
+            min_length=1,
+            max_length=500,
+            description="需要查询的预算或费用制度问题",
+            examples=[
+                "单笔费用达到20000元需要谁复核？"
+            ],
+        ),
+    ],
+    top_k: Annotated[
+        int,
+        Query(
+            ge=1,
+            le=10,
+            description="返回最相关的制度片段数量",
+        ),
+    ] = 3,
+) -> dict[str, object]:
+    """根据自然语言问题检索相关预算制度。"""
+
+    try:
+        return retrieve_policy_context(
+            query=query,
+            top_k=top_k,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        ) from exc
+    
 @app.get(
     "/risk-overview",
     response_model=RiskOverviewResponse,
@@ -286,3 +383,100 @@ def get_expense_growth_anomalies(
             status_code=404,
             detail=str(exc),
         ) from exc
+
+@app.post(
+    "/agent/chat",
+    response_model=AgentChatResponse,
+)
+def chat_with_budget_agent(
+    request: AgentChatRequest,
+) -> AgentChatResponse:
+    """向BudgetPilot Agent发送自然语言任务。"""
+
+    try:
+        result = run_budget_agent(
+            user_input=request.message,
+            thread_id=request.thread_id,
+        )
+
+        return AgentChatResponse(
+            **result
+        )
+
+    except ValueError as exc:
+        logger.warning(
+            (
+                "event=agent_bad_request "
+                f"thread_id={request.thread_id} "
+                f"error={exc}"
+            )
+        )
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        ) from exc
+
+    except Exception:
+        logger.exception(
+            (
+                "event=agent_request_failed "
+                f"thread_id={request.thread_id}"
+            )
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Agent执行失败，"
+                "请稍后重试。"
+            ),
+        )
+@app.post(
+    "/agent/resume",
+    response_model=AgentChatResponse,
+)
+def resume_budget_agent_task(
+    request: AgentResumeRequest,
+) -> AgentChatResponse:
+    """批准或拒绝一个暂停中的Agent任务。"""
+
+    try:
+        result = resume_budget_agent(
+            thread_id=request.thread_id,
+            approved=request.approved,
+        )
+
+        return AgentChatResponse(
+            **result
+        )
+
+    except ValueError as exc:
+        logger.warning(
+            (
+                "event=agent_resume_bad_request "
+                f"thread_id={request.thread_id} "
+                f"error={exc}"
+            )
+        )
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        ) from exc
+
+    except Exception:
+        logger.exception(
+            (
+                "event=agent_resume_failed "
+                f"thread_id={request.thread_id}"
+            )
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Agent恢复执行失败，"
+                "请稍后重试。"
+            ),
+        )
