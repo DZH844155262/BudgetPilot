@@ -6,23 +6,23 @@
 
 ## 项目简介
 
-传统企业预算管理系统通常依赖复杂菜单和固定操作流程，业务人员需要学习大量系统操作。
+BudgetPilot 是一个面向企业预算管理场景的 AI Agent 应用。
 
-本项目通过 AI Agent 将用户自然语言需求转换为可执行任务：
+用户无需学习复杂系统操作，只需要通过自然语言描述需求，Agent 即可完成：
 
-    用户输入需求
-            ↓
-    Agent理解用户意图
-            ↓
-    LangGraph工作流编排
-            ↓
-    Tool调用业务能力
-            ↓
-    数据库查询 / RAG检索
-            ↓
-    结果生成
+用户输入需求\
+↓\
+Agent 理解用户意图\
+↓\
+LangGraph 工作流编排\
+↓\
+Tool 调用业务能力\
+↓\
+数据库查询 / RAG 检索\
+↓\
+生成分析结果
 
-用户无需手动寻找功能入口，只需要描述目标即可完成预算分析任务。
+系统支持预算查询、风险分析、企业制度问答以及报告生成。
 
 ------------------------------------------------------------------------
 
@@ -32,20 +32,17 @@
 
 用户输入：
 
-    帮我看看研发部2026年7月预算情况
+> 帮我看看研发部2026年7月预算情况
 
 Agent 自动完成：
 
 -   意图识别
 -   参数提取（部门、月份）
 -   调用预算分析 Tool
--   查询 PostgreSQL业务数据
+-   查询 PostgreSQL 业务数据
 -   返回结构化分析结果
 
-```{=html}
-<!-- 请替换为你的第一张截图 -->
-```
-`<img src="./docs/images/budget_analysis.png" width="850">`{=html}
+![预算分析](文档/图片/budget_analysis.png)
 
 ------------------------------------------------------------------------
 
@@ -55,46 +52,31 @@ Agent 自动完成：
 
 用户继续输入：
 
-    那风险呢？
+> 那风险呢？
 
 Agent 自动继承上一轮上下文：
 
-    department = 研发部
-    month = 2026-07
+``` text
+department = 研发部
+month = 2026-07
+```
 
 并调用风险分析 Tool。
 
-```{=html}
-<!-- 请替换为你的第二张截图 -->
-```
-`<img src="./docs/images/risk_analysis.png" width="850">`{=html}
+![风险分析](文档/图片/risk_analysis.png)
 
 ------------------------------------------------------------------------
 
-## 3. Human-in-the-Loop 报告生成
+## 3. 智能交互界面
 
-对于需要确认的操作，Agent不会直接执行。
+系统提供 Web 端交互页面，支持：
 
-用户输入：
+-   新建会话
+-   历史会话查看
+-   Agent 实时响应
+-   分析结果展示
 
-    帮我生成研发部2026年7月预算报告
-
-执行流程：
-
-    预算报告请求
-            ↓
-    LangGraph interrupt暂停
-            ↓
-    等待用户确认
-            ↓
-    Command(resume)
-            ↓
-    继续执行报告生成 Tool
-
-```{=html}
-<!-- 请替换为你的第三张截图 -->
-```
-`<img src="./docs/images/hitl_report.png" width="850">`{=html}
+![系统首页](文档/图片/demo_home.png)
 
 ------------------------------------------------------------------------
 
@@ -105,99 +87,64 @@ Agent 自动继承上一轮上下文：
 使用 LangGraph 构建可控 Agent 工作流：
 
 -   Structured Router 意图识别
--   State状态管理
+-   State 状态管理
 -   Tool Calling
--   Checkpoint持久化
--   Human-in-the-Loop审批
--   Agent Skill加载
+-   Checkpoint 持久化
+-   Human-in-the-Loop 审批
 
 支持任务：
 
-    budget_analysis
-    risk_overview
-    policy_question
-    budget_report
+-   budget_analysis
+-   risk_overview
+-   policy_question
+-   budget_report
 
 ------------------------------------------------------------------------
 
-# 2. Tool Calling 与业务系统集成
+## 2. Tool Calling 与业务系统集成
 
-项目没有让大语言模型直接访问数据库。
+系统不允许 LLM 直接访问数据库，而采用：
 
-采用分层架构：
+``` text
+Agent
+ ↓
+Tool
+ ↓
+Service
+ ↓
+Repository
+ ↓
+PostgreSQL
+```
 
-    Agent
-     ↓
-    Tool
-     ↓
-    Service
-     ↓
-    Repository
-     ↓
-    PostgreSQL
+职责：
 
-职责划分：
+-   Agent：理解需求、选择路径、调度工具
+-   Tool：提供预算查询、风险分析、报告生成能力
+-   Service：负责业务计算和规则处理
+-   Repository：负责数据访问
 
-### Agent
-
-负责：
-
--   理解用户需求
--   选择执行路径
--   调度工具
-
-### Tool
-
-提供受控业务能力：
-
--   预算查询
--   风险分析
--   报告生成
-
-### Service
-
-负责：
-
--   预算计算
--   风险规则
--   数据处理
-
-### Repository
-
-负责：
-
--   数据访问
--   SQL查询
-
-这种设计避免：
-
-    LLM
-     ↓
-    直接生成SQL
-     ↓
-    访问数据库
-
-提高系统稳定性和可维护性。
+提升系统稳定性和可维护性。
 
 ------------------------------------------------------------------------
 
-# 3. RAG 企业制度问答
+## 3. RAG 企业制度问答
 
-针对企业内部制度文档构建 RAG Pipeline。
+构建企业制度文档 RAG Pipeline：
 
-流程：
-
-    企业制度文档
-            ↓
-    文本切分
-            ↓
-    BGE Embedding
-            ↓
-    pgvector向量检索
-            ↓
-    BGE Reranker精排
-            ↓
-    DeepSeek生成答案
+``` text
+企业制度文档
+ ↓
+文本切分
+ ↓
+BGE Embedding
+ ↓
+pgvector 检索
+ ↓
+BGE Reranker 精排
+ ↓
+LLM生成答案
+```
 
 支持：
 
@@ -205,16 +152,11 @@ Agent 自动继承上一轮上下文：
 -   来源引用
 -   降低模型幻觉
 
-```{=html}
-<!-- 可选截图：RAG问答 -->
-```
-`<img src="./docs/images/rag_answer.png" width="850">`{=html}
-
 ------------------------------------------------------------------------
 
-# 4. Memory 多轮会话
+## 4. Memory 多轮会话
 
-使用 LangGraph Checkpoint 机制保存 Agent 状态。
+使用 LangGraph Checkpoint 机制保存 Agent 状态：
 
 保存：
 
@@ -223,55 +165,40 @@ Agent 自动继承上一轮上下文：
 -   月份信息
 -   查询结果
 
-例如：
-
-第一轮：
-
-    查询研发部7月预算
-
-第二轮：
-
-    那风险呢？
-
-系统可以自动恢复上下文。
+实现连续问题分析。
 
 ------------------------------------------------------------------------
 
 # 系统架构
 
-```{=html}
-<!-- 请替换为架构图 -->
+``` text
+Next.js
+  ↓
+FastAPI
+  ↓
+LangGraph Agent
+  ↓
+Router
+  ↓
+Tools
+  ↓
+Business Service
+  ↓
+PostgreSQL
+
+
+RAG:
+
+Document
+  ↓
+Embedding
+  ↓
+pgvector
+  ↓
+Reranker
+  ↓
+LLM
 ```
-`<img src="./docs/images/architecture.png" width="900">`{=html}
-
-整体：
-
-    Next.js
-        ↓
-    FastAPI
-        ↓
-    LangGraph Agent
-        ↓
-    Router
-        ↓
-    Tools
-        ↓
-    Business Service
-        ↓
-    PostgreSQL
-
-
-    RAG:
-
-    Document
-        ↓
-    Embedding
-        ↓
-    pgvector
-        ↓
-    Reranker
-        ↓
-    LLM
 
 ------------------------------------------------------------------------
 
@@ -290,7 +217,6 @@ Agent 自动继承上一轮上下文：
 -   BGE Embedding
 -   pgvector
 -   BGE Reranker
--   DeepEval
 
 ## Backend
 
@@ -316,40 +242,19 @@ Agent 自动继承上一轮上下文：
 
 # 项目结构
 
-    BudgetPilot/
+``` text
+BudgetPilot/
 
-    ├── agent/
-    ├── tools/
-    ├── services/
-    ├── repository/
-    ├── rag/
-    ├── frontend/
-    ├── tests/
-    ├── evaluation/
-    └── README.md
-
-------------------------------------------------------------------------
-
-# RAG Evaluation
-
-采用冻结测试集进行检索与生成评估：
-
-Retrieval:
-
--   Recall@3
--   MRR
--   nDCG
-
-Generation:
-
--   Faithfulness
--   Answer Relevancy
--   Citation
-
-```{=html}
-<!-- 可放评测截图 -->
+├── agent/
+├── tools/
+├── services/
+├── repository/
+├── rag/
+├── frontend/
+├── tests/
+├── evaluation/
+└── README.md
 ```
-`<img src="./docs/images/evaluation.png" width="850">`{=html}
 
 ------------------------------------------------------------------------
 
@@ -357,25 +262,25 @@ Generation:
 
 ## 为什么使用 LangGraph？
 
-相比传统 if-else 工作流：
-
-LangGraph提供：
+相比传统 if-else 工作流，LangGraph 提供：
 
 -   显式状态管理
 -   条件路由
--   Checkpoint恢复
+-   Checkpoint 恢复
 -   人工审批
 -   可扩展工作流
 
 ## 为什么 Tool 不直接让 LLM 操作数据库？
 
-因为预算系统需要保证：
+预算系统需要保证：
 
 -   数据准确性
 -   业务规则稳定
 -   可测试性
 
-LLM负责理解和生成，确定性逻辑交给代码执行。
+因此：
+
+LLM 负责理解和生成，确定性业务逻辑交给代码执行。
 
 ------------------------------------------------------------------------
 
@@ -384,7 +289,7 @@ LLM负责理解和生成，确定性逻辑交给代码执行。
 -   Hybrid Retrieval
 -   权限控制
 -   Agent Observability
--   Docker部署
+-   Docker 部署
 -   更多企业 Agent Skill
 
 ------------------------------------------------------------------------
